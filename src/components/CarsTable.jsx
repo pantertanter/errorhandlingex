@@ -1,24 +1,39 @@
 import React, { useState, useEffect } from 'react';
+import fetchAny from '../apiFacade';
 
 const CarsTable = () => {
   const [cars, setCars] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchCars = async () => {
-      try {
-        const response = await fetch('http://46.101.183.184:3005/api/v1/cars');
-        const data = await response.json();
-        setCars(data.cars);
-      } catch (error) {
-        console.error('Error fetching car data:', error);
-      }
-    };
+    fetchAny('http://46.101.183.184:3005/api/v1/cars', (data) => {setCars(data.cars)},
+     (err) => {setError(err)},
+      'GET', null, null)
+  }
+  , [])
 
-    fetchCars();
-  }, []); // The empty dependency array ensures the effect runs only once after the initial render
+//   useEffect(() => {
+//     (async () => {
+//       try {
+//         const response = await fetch('http://46.101.183.184:3005/api/v1/cars');
+//         const data = await response.json();
+//         setCars(data.cars);
+//       } catch (error) {
+//         console.error('Error fetching car data:', error);
+//       }
+//     })();
+//   }, []); // The empty dependency array ensures the effect runs only once after the initial render
+
+// useEffect(() => {
+//   fetch('http://46.101.183.184:3005/api/v1/cars')
+//   .then(res=>res.json())
+//   .then(data=>setCars(data.cars))
+//   .catch(err=>console.log(err))
+// }, [])
 
   return (
     <div>
+      {error && <div className="error" style={{color:'red'}}>{error}</div>}
       <h2>Car Data</h2>
       <table className="carstable">
         <thead>
